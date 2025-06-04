@@ -3,14 +3,26 @@ import Button from '@/components/ui/button/Button.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
+import { useForm } from '@inertiajs/vue3';
 
-defineProps(['post']);
+const props = defineProps(['post']);
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Show posts',
         href: '/posts/show',
     },
 ];
+const form = useForm({
+    comment: '',
+});
+const submit = () => {
+    form.post(route('comments.store', props.post),{
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset();
+        },
+    });
+};
 </script>
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -22,10 +34,12 @@ const breadcrumbs: BreadcrumbItem[] = [
         <div class="mt-8">
             <form @submit.prevent="submit">
                 <div class="relative">
-                    <Textarea class="h-full w-full"> </Textarea>
+                    <Textarea v-model="form.comment" class="h-full w-full"> </Textarea>
                     <Button class="absolute bottom-4 right-4 z-10">Submit</Button>
                 </div>
             </form>
+           
+            <pre>{{ post.comments }}</pre>
         </div>
     </AppLayout>
 </template>

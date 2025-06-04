@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\PostController;
@@ -18,7 +19,7 @@ Route::resource('posts', PostController::class);
 
 Route::resource('marker', MarkerController::class);
 
-
+Route::post('/comment/{post}', [CommentController::class, 'store']) ->name('comments.store');
   
 
 require __DIR__.'/settings.php';

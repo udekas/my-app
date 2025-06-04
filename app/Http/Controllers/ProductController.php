@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\comment;
-use App\Models\Post;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
-class CommentController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,28 +20,21 @@ class CommentController extends Controller
      */
     public function create()
     {
-        
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Post $post, Request $request)
+    public function store(Request $request)
     {
-       
-        $post->comments()->create($request->validate([
-            'comment' => 'required|string|max:255',]));
-        
-      
+        //
     }
-
-        
-    
 
     /**
      * Display the specified resource.
      */
-    public function show(comment $comment)
+    public function show(Product $product)
     {
         //
     }
@@ -50,7 +42,7 @@ class CommentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(comment $comment)
+    public function edit(Product $product)
     {
         //
     }
@@ -58,7 +50,7 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, comment $comment)
+    public function update(Request $request, Product $product)
     {
         //
     }
@@ -66,7 +58,7 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(comment $comment)
+    public function destroy(Product $product)
     {
         //
     }

@@ -34,9 +34,9 @@ class MarkerController extends Controller
         ]);
         Marker::create([
             'name' => $validateData['title'],
-            'description' => "",
-            'latitude' => 58.0,
-            'longitude' => 22.0,
+            'description' => $request->description,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ]);
         
     }

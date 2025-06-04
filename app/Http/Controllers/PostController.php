@@ -13,7 +13,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Inertia::render('posts/index');
+        return Inertia::render('posts/index', [
+            'posts' => Post::all(),
+        ]);
     }
 
     /**
@@ -37,7 +39,7 @@ class PostController extends Controller
 
         // Post::create($request->only('title', 'description'));
 
-        return redirect()->route('posts.index')->with('success', 'Post created successfully.');
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -46,9 +48,10 @@ class PostController extends Controller
     public function show(Post $post)
     {
         return Inertia::render('posts/show', [
-            'post' => $post,
-        ]);
-    }
+            'post' => $post->loadMissing([
+                'comments' => fn ($query) => $query->with('user')->orderByDesc('created_at'),
+            ]),
+        ]);    }
 
     /**
      * Show the form for editing the specified resource.

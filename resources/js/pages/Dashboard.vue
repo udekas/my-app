@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
-import { MapMouseEvent } from 'maplibre-gl';
+import { MapMouseEvent, Marker } from 'maplibre-gl';
 import Radar from 'radar-sdk-js';
 import 'radar-sdk-js/dist/radar.css';
 import { onMounted, ref } from 'vue';
@@ -17,17 +17,22 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const Props = defineProps(['weather', 'city', 'markers']);
-
+const MarkerID = ref<number>()
 const mapMouseEv = ref<MapMouseEvent>();
 
+const isPopupV = ref(false);
 const form = useForm({
     title: '',
     description: '',
-    latitude: '',
-    longitude: '',
+    latitude: 0.0,
+    longitude: 0.0,
 });
 const submit = () => {
+    if (MarkerID) {
+        form.post(route('marker.update', MarkerID));
+    }
     form.post(route('marker.store'));
+    isPopupV.value = false;
 };
 
 Radar.initialize('prj_live_pk_581819a64edfdc6543371d189067bff15b1a6314');
@@ -53,9 +58,9 @@ onMounted(() => {
     }
 
     map.on('click', (e) => {
-        form.latitude = e.lngLat.lat.toString();
-        form.longitude = e.lngLat.lng.toString();
-        Show.value = true;
+        form.latitude = e.lngLat.lat;
+        form.longitude = e.lngLat.lng;
+        isPopupV.value = true;
     });
 });
 </script>
@@ -74,20 +79,7 @@ onMounted(() => {
                     <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Clouds:</strong> {{ weather.clouds.all }}%</p>
                 </div>
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                    {{ mapMouseEv?.lngLat?.lng }}
-                    {{ mapMouseEv?.lngLat?.lat }}
-
-                    <form @submit.prevent="submit">
-                        <input
-                            type="text"
-                            name="title"
-                            id="title"
-                            class="mb-2 w-full rounded-md border border-gray-300 p-2 text-black"
-                            placeholder="nimi"
-                            v-model="form.title"
-                        />
-                        <input type="submit" value="Salvesta" class="mb-2 w-full cursor-pointer rounded-md bg-blue-500 p-2 text-white" />
-                    </form>
+                    <PlaceholderPattern/>
                 </div>
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                     <PlaceholderPattern />
@@ -97,8 +89,16 @@ onMounted(() => {
                 class="relative min-h-[100vh] flex-1 overflow-clip rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min"
             >
                 <div id="map" style="width: 100%; height: 100%" />
-                
             </div>
+        </div>
+        <div class="absolute z-50 w-full h-screen bg-[#00000090] flex items-center justify-center" v-show="isPopupV">
+            <form  @submit.prevent = "submit" class = 'flex flex-col gap-2'action="">
+                <input  class = "text-black" v-model ="form.title" type="text"/>
+                <input class = "text-black" v-model = 'form.description'type="text"/>
+                <input type="submit" value = "Salvesta"/>
+
+            </form>
+           
         </div>
     </AppLayout>
 </template>
